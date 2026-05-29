@@ -158,11 +158,11 @@ Resposta:
 
 Melhorias Futuras
 
-· Autenticacao JWT (admin vs condutor)
-· Dashboard administrativo com estatisticas
-· Integracao real com gateway de pagamento
-· Geracao de QR Code funcional (ZXing)
-· Relatorios de faturamento
-· Lock otimista/pessimista para concorrencia
-· Documentacao Swagger/OpenAPI
+Autenticacao JWT (admin vs condutor)
+Dashboard administrativo com estatisticas
+Integracao real com gateway de pagamento
+Geracao de QR Code funcional (ZXing)
+Relatorios de faturamento
+Lock otimista/pessimista para concorrencia
+Documentacao Swagger/OpenAPI
 
