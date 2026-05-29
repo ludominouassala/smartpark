@@ -1,0 +1,77 @@
+.sidebar {
+    min-height: calc(100vh - 56px);
+    background-color: #f8f9fa;
+}
+
+.vagas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 15px;
+    padding: 20px;
+}
+
+.vaga-card {
+    text-align: center;
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.vaga-card:hover {
+    transform: scale(1.05);
+}
+
+.vaga-livre {
+    background-color: #28a745;
+    color: white;
+}
+
+.vaga-ocupada {
+    background-color: #dc3545;
+    color: white;
+}
+
+.qrcode-modal {
+    font-family: monospace;
+    font-size: 14px;
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+    word-break: break-all;
+}
+
+.ticket-card {
+    margin-bottom: 15px;
+    border-left: 4px solid #007bff;
+}
+
+.status-ativo {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.status-pago {
+    color: #ffc107;
+}
+
+.status-finalizado {
+    color: #6c757d;
+}
+
+.loading {
+    text-align: center;
+    padding: 20px;
+}
+
+@media (max-width: 768px) {
+    .vagas-grid {
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 10px;
+    }
+    
+    .vaga-card {
+        padding: 10px;
+        font-size: 12px;
+    }
+}
