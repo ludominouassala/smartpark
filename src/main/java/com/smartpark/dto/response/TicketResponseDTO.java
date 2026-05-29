@@ -11,3 +11,4 @@ public class TicketResponseDTO {
     private String status;
     private Double valor;
 }
+
