@@ -5,6 +5,7 @@ C:\Dev\Projetos\smartpark\src\main\java\com\smartpark\dto\response\TicketRespons
 C:\Dev\Projetos\smartpark\src\main\java\com\smartpark\repository\VagaRepository.java
 C:\Dev\Projetos\smartpark\src\main\java\com\smartpark\dto\request\EntradaRequestDTO.java
 C:\Dev\Projetos\smartpark\src\main\java\com\smartpark\repository\PagamentoRepository.java
+C:\Dev\Projetos\smartpark\src\main\java\com\smartpark\dto\response\TicketHistoricoDTO.java
 C:\Dev\Projetos\smartpark\src\main\java\com\smartpark\model\Veiculo.java
 C:\Dev\Projetos\smartpark\src\main\java\com\smartpark\controller\VagaController.java
 C:\Dev\Projetos\smartpark\src\main\java\com\smartpark\enums\StatusTicket.java
@@ -19,6 +20,7 @@ C:\Dev\Projetos\smartpark\src\main\java\com\smartpark\dto\request\SaidaRequestDT
 C:\Dev\Projetos\smartpark\src\main\java\com\smartpark\enums\StatusPagamento.java
 C:\Dev\Projetos\smartpark\src\main\java\com\smartpark\service\PagamentoService.java
 C:\Dev\Projetos\smartpark\src\main\java\com\smartpark\controller\TicketController.java
+C:\Dev\Projetos\smartpark\src\main\java\com\smartpark\controller\HistoricoController.java
 C:\Dev\Projetos\smartpark\src\main\java\com\smartpark\enums\TipoVeiculo.java
 C:\Dev\Projetos\smartpark\src\main\java\com\smartpark\controller\PagamentoController.java
 C:\Dev\Projetos\smartpark\src\main\java\com\smartpark\service\VeiculoService.java

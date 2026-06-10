@@ -52,6 +52,9 @@ async function registrarEntrada(veiculo) {
     return apiRequest('/tickets/entrada', 'POST', veiculo);
 }
 
+// Alias para usar no tickets.js
+const registrarSaidaAPI = registrarSaida;
+
 async function registrarSaida(ticketId) {
     return apiRequest('/tickets/saida', 'POST', { ticketId: parseInt(ticketId) });
 }

@@ -1,123 +1,276 @@
-/* historico.js – SmartPark refatorado */
+// historico.js - Página de Histórico
 
+// Carregar histórico completo
 async function carregarHistorico() {
-  const container = document.getElementById('veiculosList');
-  if (!container) return;
-  container.innerHTML = `<div class="sp-loading"><div class="sp-spinner"></div><p>Carregando histórico...</p></div>`;
+    const container = document.getElementById('veiculosList');
+    if (!container) return;
+    
+    container.innerHTML = '<div class="sp-loading"><div class="sp-spinner"></div><p>Carregando histórico...</p></div>';
 
-  try {
-    const veiculos = await apiGet('/veiculos');
-    if (!veiculos || veiculos.length === 0) {
-      container.innerHTML = `<div class="sp-empty"><i class="fas fa-car-alt"></i><p>Nenhum veículo cadastrado</p></div>`;
-      return;
+    try {
+        // Buscar histórico completo
+        const historico = await listarHistorico();
+        
+        if (!historico || historico.length === 0) {
+            container.innerHTML = `
+                <div class="sp-empty-state">
+                    <i class="fas fa-history"></i>
+                    <p>Nenhum registro encontrado no histórico</p>
+                    <small>Registre uma entrada no Dashboard para aparecer aqui</small>
+                </div>
+            `;
+            return;
+        }
+        
+        // Agrupar por veículo (placa)
+        const veiculosMap = new Map();
+        
+        historico.forEach(ticket => {
+            const placa = ticket.placa;
+            if (!veiculosMap.has(placa)) {
+                veiculosMap.set(placa, {
+                    placa: placa,
+                    tickets: []
+                });
+            }
+            veiculosMap.get(placa).tickets.push(ticket);
+        });
+        
+        // Ordenar por placa
+        const veiculos = Array.from(veiculosMap.values())
+            .sort((a, b) => a.placa.localeCompare(b.placa));
+        
+        // Renderizar
+        container.innerHTML = veiculos.map(veiculo => {
+            const safeId = veiculo.placa.replace(/[^a-zA-Z0-9]/g, '_');
+            // Ordenar tickets por data (mais recente primeiro)
+            const ticketsOrdenados = [...veiculo.tickets].sort((a, b) => 
+                new Date(b.dataHoraEntrada) - new Date(a.dataHoraEntrada)
+            );
+            
+            return `
+                <div class="veiculo-card" data-placa="${veiculo.placa}">
+                    <div class="veiculo-header" onclick="toggleVeiculo('${safeId}')">
+                        <div>
+                            <i class="fas fa-car"></i>
+                            <strong>${veiculo.placa}</strong>
+                            <span class="veiculo-badge">${veiculo.tickets.length} registro(s)</span>
+                        </div>
+                        <i class="fas fa-chevron-down veiculo-arrow" id="arrow-${safeId}"></i>
+                    </div>
+                    <div class="veiculo-tickets" id="tickets-${safeId}" style="display:none">
+                        <table class="sp-table">
+                            <thead>
+                                <tr>
+                                    <th>Ticket ID</th>
+                                    <th>Vaga</th>
+                                    <th>Entrada</th>
+                                    <th>Saída</th>
+                                    <th>Tempo</th>
+                                    <th>Valor</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${ticketsOrdenados.map(ticket => {
+                                    const tempo = calcularTempo(ticket.dataHoraEntrada, ticket.dataHoraSaida);
+                                    const valor = ticket.valorPago || ticket.valorCalculado || 0;
+                                    return `
+                                        <tr>
+                                            <td><span class="sp-badge sp-badge-dark">#${ticket.id}</span></td>
+                                            <td>${ticket.vagaCodigo || '-'}</td>
+                                            <td>${formatarData(ticket.dataHoraEntrada)}</td>
+                                            <td>${formatarData(ticket.dataHoraSaida)}</td>
+                                            <td>${tempo}</td>
+                                            <td class="valor-pago">${valor > 0 ? `R$ ${valor.toFixed(2).replace('.', ',')}` : '-'}</td>
+                                            <td><span class="status-badge status-${(ticket.status || '').toLowerCase()}">${ticket.status || 'ATIVO'}</span></td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+    } catch(error) {
+        console.error('Erro ao carregar histórico:', error);
+        container.innerHTML = `
+            <div class="sp-empty-state">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>Erro ao carregar histórico</p>
+                <small>Verifique se o backend está rodando</small>
+            </div>
+        `;
     }
-
-    container.innerHTML = `
-      <div class="sp-table-wrap">
-        <table class="sp-table">
-          <thead>
-            <tr>
-              <th>Placa</th>
-              <th>Modelo</th>
-              <th>Cor</th>
-              <th>Tipo</th>
-              <th>Visitas</th>
-              <th>Última Entrada</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${veiculos.map(v => `
-              <tr>
-                <td>
-                  <span style="font-family:'Exo 2',monospace;font-weight:700;color:var(--sp-accent);letter-spacing:2px">${v.placa || '–'}</span>
-                </td>
-                <td>${v.modelo || '–'}</td>
-                <td>
-                  <span style="display:inline-flex;align-items:center;gap:6px">
-                    <span style="width:10px;height:10px;border-radius:50%;background:${corHex(v.cor)};display:inline-block;border:1px solid rgba(255,255,255,0.2)"></span>
-                    ${v.cor || '–'}
-                  </span>
-                </td>
-                <td>${tipoIcon(v.tipo)}</td>
-                <td><span class="sp-badge sp-badge-info">${v.totalVisitas || v.visitas || '–'}</span></td>
-                <td style="font-size:0.82rem;color:var(--sp-muted)">${formatarData(v.ultimaEntrada || v.dataEntrada)}</td>
-                <td>${v.ativo || v.presente ? '<span class="sp-badge sp-badge-success"><i class="fas fa-circle"></i> No pátio</span>' : '<span class="sp-badge sp-badge-muted">Saiu</span>'}</td>
-              </tr>`).join('')}
-          </tbody>
-        </table>
-      </div>`;
-
-  } catch(e) {
-    container.innerHTML = `<div class="sp-empty"><i class="fas fa-exclamation-triangle"></i><p>Erro ao carregar histórico</p></div>`;
-  }
 }
 
+// Buscar veículo específico
 async function buscarVeiculo() {
-  const placa = document.getElementById('buscarPlaca')?.value?.trim().toUpperCase();
-  const container = document.getElementById('veiculoDetalhe');
-  if (!placa || !container) return;
-
-  container.innerHTML = `<div class="sp-loading" style="padding:1rem"><div class="sp-spinner"></div></div>`;
-
-  try {
-    const veiculo = await apiGet(`/veiculos/${placa}`);
-
-    if (!veiculo) {
-      container.innerHTML = `<div class="sp-alert sp-alert-danger"><i class="fas fa-search"></i> Nenhum veículo encontrado com a placa <strong>${placa}</strong></div>`;
-      return;
+    const placa = document.getElementById('buscarPlaca').value.trim().toUpperCase();
+    const detalheDiv = document.getElementById('veiculoDetalhe');
+    
+    if (!placa) {
+        detalheDiv.innerHTML = '<div class="alert alert-warning">Digite uma placa para buscar</div>';
+        return;
     }
-
-    const historico = veiculo.historico || veiculo.tickets || [];
-
-    container.innerHTML = `
-      <div style="border:1px solid var(--sp-border);border-radius:var(--sp-radius);overflow:hidden">
-        <div style="padding:1rem 1.2rem;background:rgba(0,198,255,0.08);border-bottom:1px solid var(--sp-border);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-          <div style="font-family:'Exo 2',monospace;font-size:1.3rem;font-weight:900;color:var(--sp-accent);letter-spacing:3px">${veiculo.placa}</div>
-          <div style="color:var(--sp-muted);font-size:0.85rem">${veiculo.modelo || ''} · ${veiculo.cor || ''} · ${tipoIcon(veiculo.tipo)}</div>
-          <div class="ms-auto">${veiculo.ativo || veiculo.presente ? '<span class="sp-badge sp-badge-success"><i class="fas fa-circle"></i> No pátio agora</span>' : '<span class="sp-badge sp-badge-muted">Fora do pátio</span>'}</div>
-        </div>
-        ${historico.length > 0 ? `
-          <div class="sp-table-wrap">
-            <table class="sp-table">
-              <thead><tr><th>Entrada</th><th>Saída</th><th>Tempo</th><th>Valor</th></tr></thead>
-              <tbody>
-                ${historico.slice(0,10).map(h => `
-                  <tr>
-                    <td style="font-size:0.82rem">${formatarData(h.entrada || h.dataEntrada)}</td>
-                    <td style="font-size:0.82rem">${formatarData(h.saida || h.dataSaida)}</td>
-                    <td><span class="sp-badge sp-badge-info">${h.tempoFormatado || h.tempo || '–'}</span></td>
-                    <td style="color:var(--sp-success);font-weight:600">${h.valor ? 'R$ '+parseFloat(h.valor).toFixed(2).replace('.',',') : '–'}</td>
-                  </tr>`).join('')}
-              </tbody>
-            </table>
-          </div>` : `<div class="sp-empty" style="padding:1.5rem"><i class="fas fa-history"></i><p>Sem histórico de visitas</p></div>`}
-      </div>`;
-
-  } catch(e) {
-    container.innerHTML = `<div class="sp-alert sp-alert-danger"><i class="fas fa-exclamation-circle"></i> Erro ao buscar veículo: ${e.message || ''}</div>`;
-  }
+    
+    detalheDiv.innerHTML = '<div class="sp-loading"><div class="sp-spinner"></div><p>Buscando veículo...</p></div>';
+    
+    try {
+        // Buscar veículo
+        const veiculo = await buscarVeiculoPorPlaca(placa);
+        
+        if (!veiculo) {
+            detalheDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Veículo com placa ${placa} não encontrado.
+                </div>
+            `;
+            return;
+        }
+        
+        // Buscar histórico completo e filtrar pelo veículo
+        const historico = await listarHistorico();
+        const ticketsVeiculo = historico.filter(t => t.placa === placa);
+        
+        if (ticketsVeiculo.length === 0) {
+            detalheDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Veículo ${placa} encontrado, mas não possui registros no histórico.
+                </div>
+            `;
+            return;
+        }
+        
+        // Ordenar tickets (mais recente primeiro)
+        ticketsVeiculo.sort((a, b) => new Date(b.dataHoraEntrada) - new Date(a.dataHoraEntrada));
+        
+        detalheDiv.innerHTML = `
+            <div class="veiculo-detalhe-card">
+                <div class="veiculo-detalhe-header">
+                    <div>
+                        <i class="fas fa-car"></i>
+                        <strong>${veiculo.placa}</strong>
+                        ${veiculo.modelo ? `<span class="veiculo-info">${veiculo.modelo}</span>` : ''}
+                        ${veiculo.cor ? `<span class="veiculo-info">${veiculo.cor}</span>` : ''}
+                        ${veiculo.tipo ? `<span class="veiculo-info">${veiculo.tipo}</span>` : ''}
+                    </div>
+                    <button class="sp-btn sp-btn-sm" onclick="fecharBusca()">
+                        <i class="fas fa-times"></i> Fechar
+                    </button>
+                </div>
+                <div class="veiculo-detalhe-body">
+                    <strong>Histórico de permanências (${ticketsVeiculo.length})</strong>
+                    <table class="sp-table mt-2">
+                        <thead>
+                            <tr>
+                                <th>Ticket</th>
+                                <th>Vaga</th>
+                                <th>Entrada</th>
+                                <th>Saída</th>
+                                <th>Tempo</th>
+                                <th>Valor</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${ticketsVeiculo.map(ticket => {
+                                const tempo = calcularTempo(ticket.dataHoraEntrada, ticket.dataHoraSaida);
+                                const valor = ticket.valorPago || ticket.valorCalculado || 0;
+                                return `
+                                    <tr>
+                                        <td>#${ticket.id}</td>
+                                        <td>${ticket.vagaCodigo || '-'}</td>
+                                        <td>${formatarData(ticket.dataHoraEntrada)}</td>
+                                        <td>${formatarData(ticket.dataHoraSaida)}</td>
+                                        <td>${tempo}</td>
+                                        <td class="valor-pago">${valor > 0 ? `R$ ${valor.toFixed(2).replace('.', ',')}` : '-'}</td>
+                                        <td><span class="status-badge status-${(ticket.status || '').toLowerCase()}">${ticket.status || 'ATIVO'}</span></td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+        
+    } catch(error) {
+        console.error('Erro ao buscar veículo:', error);
+        detalheDiv.innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle"></i> Erro ao buscar veículo: ${error.message}
+            </div>
+        `;
+    }
 }
 
-/* Helpers */
-function tipoIcon(tipo) {
-  const map = { CARRO: '🚗 Carro', MOTO: '🏍️ Moto', CAMINHAO: '🚛 Caminhão' };
-  return map[tipo] || (tipo || '–');
+// Fechar busca
+function fecharBusca() {
+    document.getElementById('veiculoDetalhe').innerHTML = '';
+    document.getElementById('buscarPlaca').value = '';
 }
 
-function corHex(cor) {
-  const map = { 'branco': '#fff', 'preto': '#222', 'prata': '#c0c0c0', 'cinza': '#888',
-    'vermelho': '#e53935', 'azul': '#1e88e5', 'verde': '#43a047', 'amarelo': '#fdd835',
-    'laranja': '#fb8c00', 'marrom': '#6d4c41', 'bege': '#d7ccc8', 'rosa': '#e91e63' };
-  if (!cor) return '#555';
-  const key = cor.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  return map[key] || '#8899aa';
+// Alternar exibição dos tickets do veículo
+function toggleVeiculo(safeId) {
+    const ticketsDiv = document.getElementById(`tickets-${safeId}`);
+    const arrow = document.getElementById(`arrow-${safeId}`);
+    
+    if (!ticketsDiv) return;
+    
+    if (ticketsDiv.style.display === 'none' || ticketsDiv.style.display === '') {
+        ticketsDiv.style.display = 'block';
+        if (arrow) arrow.style.transform = 'rotate(180deg)';
+    } else {
+        ticketsDiv.style.display = 'none';
+        if (arrow) arrow.style.transform = 'rotate(0deg)';
+    }
 }
 
-function formatarData(str) {
-  if (!str) return '–';
-  try { return new Date(str).toLocaleString('pt-BR', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}); }
-  catch { return str; }
+// Calcular tempo de permanência
+function calcularTempo(entrada, saida) {
+    if (!entrada || !saida) return '-';
+    try {
+        const inicio = new Date(entrada);
+        const fim = new Date(saida);
+        const diffMinutos = Math.floor((fim - inicio) / 60000);
+        const horas = Math.floor(diffMinutos / 60);
+        const minutos = diffMinutos % 60;
+        
+        if (horas > 0 && minutos > 0) {
+            return `${horas}h ${minutos}min`;
+        } else if (horas > 0) {
+            return `${horas}h`;
+        } else if (minutos > 0) {
+            return `${minutos}min`;
+        }
+        return `${diffMinutos}min`;
+    } catch {
+        return '-';
+    }
 }
 
-carregarHistorico();
+// Formatar data/hora
+function formatarData(dataHora) {
+    if (!dataHora) return '-';
+    try {
+        const data = new Date(dataHora);
+        return data.toLocaleString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    } catch {
+        return dataHora;
+    }
+}
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', () => {
+    carregarHistorico();
+    // Recarregar a cada 30 segundos
+    setInterval(carregarHistorico, 30000);
+});
