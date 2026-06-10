@@ -703,3 +703,72 @@ body {
   z-index: 850;
 }
 .sp-sidebar-overlay.show { display: block; }
+
+/* Mapa de Vagas */
+.vagas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.vaga-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 12px 8px;
+    text-align: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: 2px solid #dee2e6;
+}
+
+.vaga-card.livre {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border-color: #28a745;
+}
+
+.vaga-card.ocupada {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border-color: #dc3545;
+}
+
+.vaga-codigo {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+}
+
+.vaga-status {
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.vaga-tipo {
+    font-size: 0.65rem;
+    color: #6c757d;
+}
+
+.legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 4px;
+}
+
+.legend-dot.livre {
+    background-color: #28a745;
+}
+
+.legend-dot.ocupada {
+    background-color: #dc3545;
+}
+
+.vagas-legend {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+    font-size: 0.8rem;
+}

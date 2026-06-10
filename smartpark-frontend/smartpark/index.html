@@ -50,19 +50,19 @@
       <div class="carousel-inner">
         <div class="carousel-item active" style="background-image:url('https://images.unsplash.com/photo-1590674899484-d5640e854abe?w=1200&auto=format&fit=crop&q=80');">
           <div class="carousel-caption">
-            <h5><i class="fas fa-bolt" style="color:var(--sp-accent)"></i> Gestão Inteligente de Estacionamento</h5>
+            <h5><i class="fas fa-bolt"></i> Gestão Inteligente de Estacionamento</h5>
             <p>Controle em tempo real de todas as vagas e movimentações</p>
           </div>
         </div>
         <div class="carousel-item" style="background-image:url('https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=1200&auto=format&fit=crop&q=80');">
           <div class="carousel-caption">
-            <h5><i class="fas fa-qrcode" style="color:var(--sp-accent)"></i> Pagamento via QR Code</h5>
+            <h5><i class="fas fa-qrcode"></i> Pagamento via QR Code</h5>
             <p>Saída rápida com geração automática de código de pagamento</p>
           </div>
         </div>
         <div class="carousel-item" style="background-image:url('https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=1200&auto=format&fit=crop&q=80');">
           <div class="carousel-caption">
-            <h5><i class="fas fa-shield-alt" style="color:var(--sp-accent)"></i> Segurança e Rastreabilidade</h5>
+            <h5><i class="fas fa-shield-alt"></i> Segurança e Rastreabilidade</h5>
             <p>Histórico completo de todos os veículos e movimentações</p>
           </div>
         </div>
@@ -110,7 +110,7 @@
       <div class="sp-card">
         <div class="sp-card-header">
           <span><i class="fas fa-sign-in-alt"></i> Últimas Entradas</span>
-          <span class="sp-badge sp-badge-info" id="entradas-count">–</span>
+          <span class="sp-badge sp-badge-info" id="entradas-count">0</span>
         </div>
         <div class="sp-card-body" style="padding:0">
           <div class="sp-table-wrap">
@@ -122,8 +122,10 @@
                   <th>Entrada</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr><td colspan="3"><div class="sp-loading"><div class="sp-spinner"></div></div></td></tr>
+              <tbody id="ultimasEntradasBody">
+                <tr>
+                  <td colspan="3"><div class="sp-loading"><div class="sp-spinner"></div> Carregando...</div></td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -139,20 +141,20 @@
           <div id="entradaMsg"></div>
           <form id="entradaForm" class="sp-form">
             <div class="mb-3">
-              <label class="form-label sp-form .form-label">Placa do Veículo</label>
+              <label class="form-label">Placa do Veículo</label>
               <input type="text" class="sp-input form-control" id="placa" placeholder="ABC-1234" required maxlength="10" style="text-transform:uppercase">
             </div>
             <div class="mb-3">
-              <label class="form-label sp-form .form-label">Modelo</label>
+              <label class="form-label">Modelo</label>
               <input type="text" class="sp-input form-control" id="modelo" placeholder="Ex: Toyota Corolla">
             </div>
             <div class="row">
               <div class="col-6 mb-3">
-                <label class="form-label sp-form .form-label">Cor</label>
+                <label class="form-label">Cor</label>
                 <input type="text" class="sp-input form-control" id="cor" placeholder="Ex: Prata">
               </div>
               <div class="col-6 mb-3">
-                <label class="form-label sp-form .form-label">Tipo</label>
+                <label class="form-label">Tipo</label>
                 <select class="sp-input form-control" id="tipoVeiculo">
                   <option value="CARRO">🚗 Carro</option>
                   <option value="MOTO">🏍️ Moto</option>
@@ -212,30 +214,37 @@
 <script src="js/api.js"></script>
 <script src="js/dashboard.js"></script>
 <script>
-  // DateTime
+  // Date/Time
   function updateDateTime() {
     const now = new Date();
     document.getElementById('currentDateTime').textContent =
       now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
   }
-  updateDateTime(); setInterval(updateDateTime, 30000);
+  updateDateTime(); 
+  setInterval(updateDateTime, 30000);
 
   // Mobile sidebar toggle
   const toggle = document.getElementById('menuToggle');
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('sidebarOverlay');
-  toggle.addEventListener('click', () => {
-    sidebar.classList.toggle('open');
-    overlay.classList.toggle('show');
-  });
-  overlay.addEventListener('click', () => {
-    sidebar.classList.remove('open');
-    overlay.classList.remove('show');
-  });
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('show');
+    });
+  }
+  if (overlay) {
+    overlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+    });
+  }
 
   // Placa uppercase
   const placaEl = document.getElementById('placa');
-  if (placaEl) placaEl.addEventListener('input', e => e.target.value = e.target.value.toUpperCase());
+  if (placaEl) {
+    placaEl.addEventListener('input', e => e.target.value = e.target.value.toUpperCase());
+  }
 </script>
 </body>
 </html>
