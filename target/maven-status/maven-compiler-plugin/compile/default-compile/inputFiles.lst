@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 C:\Projetos\SmartPark\smartpark\src\main\java\com\smartpark\model\Ticket.java
 C:\Projetos\SmartPark\smartpark\src\main\java\com\smartpark\dto\request\SaidaRequestDTO.java
 C:\Projetos\SmartPark\smartpark\src\main\java\com\smartpark\service\VeiculoService.java
@@ -26,3 +27,35 @@ C:\Projetos\SmartPark\smartpark\src\main\java\com\smartpark\repository\VeiculoRe
 C:\Projetos\SmartPark\smartpark\src\main\java\com\smartpark\enums\StatusPagamento.java
 C:\Projetos\SmartPark\smartpark\src\main\java\com\smartpark\repository\TicketRepository.java
 C:\Projetos\SmartPark\smartpark\src\main\java\com\smartpark\service\VagaService.java
+=======
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\config\WebConfig.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\model\Ticket.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\dto\response\TicketResponseDTO.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\service\VagaService.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\enums\StatusPagamento.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\model\Vaga.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\dto\request\SaidaRequestDTO.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\repository\VeiculoRepository.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\service\VeiculoService.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\enums\TipoVeiculo.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\model\Pagamento.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\dto\response\QrCodeResponseDTO.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\model\Veiculo.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\config\DataInitializer.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\enums\StatusVaga.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\service\EstacionamentoService.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\repository\VagaRepository.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\controller\HistoricoController.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\controller\TicketController.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\controller\VeiculoController.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\dto\request\EntradaRequestDTO.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\service\TicketService.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\repository\PagamentoRepository.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\enums\StatusTicket.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\repository\TicketRepository.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\controller\VagaController.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\SmartParkApplication.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\controller\PagamentoController.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\dto\response\TicketHistoricoDTO.java
+C:\Users\Yuran\Documents\GitHub\smartpark\src\main\java\com\smartpark\service\PagamentoService.java
+>>>>>>> Stashed changes
