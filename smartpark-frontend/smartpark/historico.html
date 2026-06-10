@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartPark – Histórico</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="sp-navbar">
+  <a class="sp-brand" href="index.html">
+    <div class="brand-icon"><i class="fas fa-parking"></i></div>
+    SMART<span style="color:var(--sp-accent)">PARK</span>
+  </a>
+  <div class="sp-nav-right">
+    <span class="sp-datetime" id="currentDateTime"></span>
+    <button class="sp-nav-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<div class="sp-sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="sp-layout">
+  <nav class="sp-sidebar" id="sidebar">
+    <div class="sp-sidebar-label">Navegação</div>
+    <a href="index.html"      class="sp-nav-item"><i class="fas fa-chart-line"></i> Dashboard</a>
+    <a href="vagas.html"      class="sp-nav-item"><i class="fas fa-parking"></i> Vagas</a>
+    <a href="tickets.html"    class="sp-nav-item"><i class="fas fa-ticket-alt"></i> Tickets Ativos</a>
+    <a href="pagamentos.html" class="sp-nav-item"><i class="fas fa-credit-card"></i> Pagamentos</a>
+    <a href="historico.html"  class="sp-nav-item active"><i class="fas fa-history"></i> Histórico</a>
+  </nav>
+
+  <main class="sp-main">
+    <div class="sp-page-title"><i class="fas fa-history"></i> Histórico Completo</div>
+
+    <!-- Buscar veículo -->
+    <div class="sp-card mb-4">
+      <div class="sp-card-header">
+        <span><i class="fas fa-search"></i> Buscar Veículo por Placa</span>
+      </div>
+      <div class="sp-card-body">
+        <div class="sp-search-group mb-3">
+          <input type="text" class="sp-input form-control" id="buscarPlaca"
+            placeholder="Digite a placa (ex: ABC-1234)"
+            style="text-transform:uppercase"
+            onkeyup="this.value=this.value.toUpperCase()"
+            onkeypress="if(event.key==='Enter') buscarVeiculo()">
+          <button class="sp-btn sp-btn-primary" onclick="buscarVeiculo()">
+            <i class="fas fa-search"></i> Buscar
+          </button>
+        </div>
+        <div id="veiculoDetalhe"></div>
+      </div>
+    </div>
+
+    <!-- Veículos cadastrados -->
+    <div class="sp-card">
+      <div class="sp-card-header">
+        <span><i class="fas fa-car-alt"></i> Veículos Cadastrados</span>
+        <button class="sp-btn sp-btn-outline" onclick="carregarHistorico()" style="padding:4px 12px;font-size:0.78rem">
+          <i class="fas fa-sync-alt"></i> Atualizar
+        </button>
+      </div>
+      <div class="sp-card-body" style="padding:0">
+        <div id="veiculosList">
+          <div class="sp-loading"><div class="sp-spinner"></div><p>Carregando histórico...</p></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/historico.js"></script>
+<script>
+  function updateDateTime() {
+    const now = new Date();
+    document.getElementById('currentDateTime').textContent =
+      now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+  }
+  updateDateTime();
+
+  const toggle = document.getElementById('menuToggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  toggle.addEventListener('click', () => { sidebar.classList.toggle('open'); overlay.classList.toggle('show'); });
+  overlay.addEventListener('click', () => { sidebar.classList.remove('open'); overlay.classList.remove('show'); });
+</script>
+</body>
+</html>

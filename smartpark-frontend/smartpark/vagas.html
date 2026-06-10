@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartPark – Vagas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="sp-navbar">
+  <a class="sp-brand" href="index.html">
+    <div class="brand-icon"><i class="fas fa-parking"></i></div>
+    SMART<span style="color:var(--sp-accent)">PARK</span>
+  </a>
+  <div class="sp-nav-right">
+    <span class="sp-datetime" id="currentDateTime"></span>
+    <button class="sp-nav-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<div class="sp-sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="sp-layout">
+  <nav class="sp-sidebar" id="sidebar">
+    <div class="sp-sidebar-label">Navegação</div>
+    <a href="index.html"      class="sp-nav-item"><i class="fas fa-chart-line"></i> Dashboard</a>
+    <a href="vagas.html"      class="sp-nav-item active"><i class="fas fa-parking"></i> Vagas</a>
+    <a href="tickets.html"    class="sp-nav-item"><i class="fas fa-ticket-alt"></i> Tickets Ativos</a>
+    <a href="pagamentos.html" class="sp-nav-item"><i class="fas fa-credit-card"></i> Pagamentos</a>
+    <a href="historico.html"  class="sp-nav-item"><i class="fas fa-history"></i> Histórico</a>
+  </nav>
+
+  <main class="sp-main">
+    <div class="sp-page-title"><i class="fas fa-parking"></i> Mapa de Vagas</div>
+
+    <!-- Carrossel de status por setor -->
+    <div id="setorCarousel" class="carousel slide sp-hero-carousel mb-4" data-bs-ride="carousel" data-bs-interval="4000">
+      <div class="carousel-indicators">
+        <button type="button" data-bs-target="#setorCarousel" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#setorCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#setorCarousel" data-bs-slide-to="2"></button>
+      </div>
+      <div class="carousel-inner">
+        <div class="carousel-item active"
+          style="background-image:url('https://images.unsplash.com/photo-1573348722427-f1d6819fdf98?w=1200&auto=format&fit=crop&q=80');">
+          <div class="carousel-caption">
+            <h5><i class="fas fa-layer-group" style="color:var(--sp-accent)"></i> Setor A – Térreo</h5>
+            <p>Vagas regulares e para motos</p>
+          </div>
+        </div>
+        <div class="carousel-item"
+          style="background-image:url('https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=1200&auto=format&fit=crop&q=80');">
+          <div class="carousel-caption">
+            <h5><i class="fas fa-layer-group" style="color:var(--sp-accent)"></i> Setor B – 1º Andar</h5>
+            <p>Vagas cobertas e para deficientes</p>
+          </div>
+        </div>
+        <div class="carousel-item"
+          style="background-image:url('https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=1200&auto=format&fit=crop&q=80');">
+          <div class="carousel-caption">
+            <h5><i class="fas fa-layer-group" style="color:var(--sp-accent)"></i> Setor C – Coberto</h5>
+            <p>Vagas VIP e para caminhões</p>
+          </div>
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#setorCarousel" data-bs-slide="prev">
+        <span class="sp-carousel-ctrl"><i class="fas fa-chevron-left"></i></span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#setorCarousel" data-bs-slide="next">
+        <span class="sp-carousel-ctrl"><i class="fas fa-chevron-right"></i></span>
+      </button>
+    </div>
+
+    <!-- Resumo rápido -->
+    <div class="sp-stats-row" style="grid-template-columns:repeat(3,1fr)" id="vagasResumo">
+      <div class="sp-stat-card green">
+        <div class="sp-stat-icon"><i class="fas fa-check-circle"></i></div>
+        <div class="sp-stat-label">Livres</div>
+        <div class="sp-stat-value" id="resumoLivres">–</div>
+      </div>
+      <div class="sp-stat-card orange">
+        <div class="sp-stat-icon"><i class="fas fa-car"></i></div>
+        <div class="sp-stat-label">Ocupadas</div>
+        <div class="sp-stat-value" id="resumoOcupadas">–</div>
+      </div>
+      <div class="sp-stat-card blue">
+        <div class="sp-stat-icon"><i class="fas fa-warehouse"></i></div>
+        <div class="sp-stat-label">Total</div>
+        <div class="sp-stat-value" id="resumoTotal">–</div>
+      </div>
+    </div>
+
+    <!-- Mapa completo -->
+    <div class="sp-card">
+      <div class="sp-card-header">
+        <span><i class="fas fa-map-marked-alt"></i> Planta do Estacionamento</span>
+        <button class="sp-btn sp-btn-outline" onclick="carregarVagas()" style="padding:4px 12px;font-size:0.78rem">
+          <i class="fas fa-sync-alt"></i> Atualizar
+        </button>
+      </div>
+      <div class="sp-card-body">
+        <div class="vagas-legend">
+          <span><div class="legend-dot livre"></div> Livre</span>
+          <span><div class="legend-dot ocupada"></div> Ocupada</span>
+        </div>
+        <div id="mapaVagasCompleto" class="vagas-grid">
+          <div class="sp-loading" style="grid-column:1/-1">
+            <div class="sp-spinner"></div><p>Carregando vagas...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/vagas.js"></script>
+<script>
+  function updateDateTime() {
+    const now = new Date();
+    document.getElementById('currentDateTime').textContent =
+      now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+  }
+  updateDateTime();
+
+  const toggle = document.getElementById('menuToggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  toggle.addEventListener('click', () => { sidebar.classList.toggle('open'); overlay.classList.toggle('show'); });
+  overlay.addEventListener('click', () => { sidebar.classList.remove('open'); overlay.classList.remove('show'); });
+</script>
+</body>
+</html>
